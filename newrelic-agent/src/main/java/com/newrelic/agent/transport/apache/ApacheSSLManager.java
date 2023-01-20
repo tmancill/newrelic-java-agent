@@ -28,9 +28,16 @@ import java.util.logging.Level;
 
 public class ApacheSSLManager {
 
+    // https://docs.oracle.com/javase/8/docs/technotes/guides/security/StandardNames.html#SSLContext
+    private static String TLS_PROTOCOL = "TLSv1.2";
+
     public static SSLContext createSSLContext(DataSenderConfig config) {
         SSLContextBuilder sslContextBuilder = new SSLContextBuilder();
         try {
+            // tmancill 2023-01-19: hardcode protocol to TLSv1.2
+            Agent.LOG.log(Level.WARNING, "Setting SSL protocol: {0}", TLS_PROTOCOL);
+            sslContextBuilder.setProtocol(TLS_PROTOCOL);
+
             if (config.getCaBundlePath() != null) {
                 Agent.LOG.log(Level.INFO, "Using ca_bundle_path: {0}", config.getCaBundlePath());
                 sslContextBuilder.loadTrustMaterial(getKeyStore(config.getCaBundlePath()), null);
